@@ -1,0 +1,109 @@
+$ballSize: 10px;
+$containerSize: 150px;
+$n: 36;
+$rotateDeg: 360deg / $n;
+$duration: 2s;
+
+* {
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+}
+
+.loader-container {
+  height: 100vh;
+  background-color: aqua;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader {
+  width: $containerSize;
+  height: $containerSize;
+  border-radius: 50%;
+  position: relative;
+
+  & .dot {
+    width: $ballSize;
+    height: $ballSize;
+    position: absolute;
+    left: 50%;
+    top: 0;
+    margin-left: -$ballSize/2;
+    margin-top: -$ballSize/2;
+    transform-origin: center $containerSize/2 + $ballSize/2;
+    perspective: 70px; //设置景深，确保translate3D近大远小效果
+    transform-style: preserve-3d; //保留三维效果
+
+    @for $i from 1 through $n {
+      &:nth-child(#{$i}) {
+        transform: rotate($rotateDeg * ($i - 1));
+
+        &::before,
+        &::after {
+          animation-delay: -$duration/$n * ($i - 1) * 6;
+        }
+      }
+    }
+
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: $ballSize;
+      height: $ballSize;
+      border-radius: 50%;
+    }
+
+    &::before {
+      background-color: #000;
+      top: -100%;
+      animation: rotate-black $duration infinite;
+
+      @keyframes rotate-black {
+        0% {
+          animation-timing-function: ease-in;
+        }
+        25% {
+          transform: translate3d(0, 100%, $ballSize);
+          animation-timing-function: ease-out;
+        }
+        50% {
+          transform: translate3d(0, 200%, 0);
+          animation-timing-function: ease-in;
+        }
+        75% {
+          transform: translate3d(0, 100%, -$ballSize);
+          animation-timing-function: ease-out;
+        }
+      }
+    }
+
+    &::after {
+      background-color: #fff;
+      top: 100%;
+      animation: rotate-white $duration infinite;
+
+      @keyframes rotate-white {
+        0% {
+          animation-timing-function: ease-in;
+        }
+        25% {
+          transform: translate3d(0, -100%, -$ballSize);
+          animation-timing-function: ease-out;
+        }
+        50% {
+          transform: translate3d(0, -200%, 0);
+          animation-timing-function: ease-in;
+        }
+        75% {
+          transform: translate3d(0, -100%, $ballSize);
+          animation-timing-function: ease-out;
+        }
+      }
+    }
+  }
+}
